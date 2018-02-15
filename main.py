@@ -1,5 +1,6 @@
 import re
 import time
+import jieba
 import random
 import string
 from multiprocessing.dummy import Pool as ThreadPool
@@ -13,9 +14,9 @@ def _main(results=None):
 
     if results is None:
         # 全螢幕時使用的參數
-        #game = Game(1660, 0, 906, 1600)
+        game = Game(1660, 0, 906, 1600)
         # 有 Wifi 熱點分享使用的參數
-        game = Game(1660, 50, 900, 1550)
+        #game = Game(1660, 50, 900, 1550)
 
         #game.ishow(game.x, game.y, game.x + game.width, game.y + game.height)
         #game.ishow(*game.question)
@@ -45,15 +46,15 @@ def _main(results=None):
                       "ハヒフヘホマミムメモヤユヨラリルレロワヲン"
 
     for ans in results[1:]:
-        tmp = re.sub("^[ABCcD][﹒.][ ']*", '', ans)
+        tmp = re.sub("^[ABCcD][·﹒.][ ']*", '', ans)
         answers.append(re.sub("[%s]" % katakana_filter, '', tmp))
 
     # Filter same word in answers
     while True:
         first_char = answers[0][0]
 
-        if first_char in string.ascii_letters:
-            break
+        #if first_char in string.ascii_letters:
+        #    break
 
         if all(map(lambda x: x[0] == first_char, answers)):
             answers = list(map(lambda x: x[1:], answers))
@@ -64,21 +65,26 @@ def _main(results=None):
     while True:
         last_char = answers[0][-1]
 
-        if last_char in string.ascii_letters:
-            break
+        #if last_char in string.ascii_letters:
+        #    break
 
         if all(map(lambda x: x[-1] == last_char, answers)):
             answers = list(map(lambda x: x[:-1], answers))
         else:
             break
 
+    print(answers)
+
     reverse_flag, keywordlist = keywords(question)
-    ans = answer(reverse_flag, keywordlist, answers)
+    ans = answer(reverse_flag, question, keywordlist, answers)
+
+    ret_val = ""
 
     if len(ans) == 1:
         for i, key in enumerate(answers):
             if ans[0] in key:
-                print('\n答案是：%s. %s\n' % (chr(65 + i), key))
+                print('\n答案是：\033[93m%s. %s\033[0m\n' % (chr(65 + i), key))
+                ret_val = "%s" % chr(65 + i)
                 break
     else:
         candicate = []
@@ -92,6 +98,14 @@ def _main(results=None):
     te = time.time()
     print('Total Cost: %s' % (te - ts))
 
+    return ret_val
+
 if __name__ == '__main__':
+
+    jieba.enable_parallel(8)
+    jieba.set_dictionary('dict.big.txt')
+    jieba.load_userdict('userdict.txt')
+    jieba.initialize()
+
     while True:
         _main()

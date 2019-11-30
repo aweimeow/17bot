@@ -7,7 +7,7 @@ jieba==0.39
 multidict==4.1.0
 Pillow==6.2.0
 pytesseract==0.1.8
-PyYAML==3.12
+PyYAML==5.1
 requests==2.18.4
 selenium==2.53.6
 six==1.11.0

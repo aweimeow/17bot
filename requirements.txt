@@ -5,7 +5,7 @@ future==0.16.0
 idna==2.6
 jieba==0.39
 multidict==4.1.0
-Pillow==6.2.0
+Pillow==9.0.0
 pytesseract==0.1.8
 PyYAML==3.12
 requests==2.18.4
